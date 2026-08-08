@@ -2,8 +2,7 @@ import os
 import torch
 import torch.nn as nn
 import torchvision.models as models
-import albumentations as A
-from albumentations.pytorch import ToTensorV2
+from torchvision import transforms
 from PIL import Image
 import numpy as np
 
@@ -87,15 +86,15 @@ class EyeDiseaseModel:
         }
 
         # -------------------------------
-        # Image Transform
+        # Image Transform (torchvision)
         # -------------------------------
-        self.transform = A.Compose([
-            A.Resize(384, 384),
-            A.Normalize(
-                mean=(0.485, 0.456, 0.406),
-                std=(0.229, 0.224, 0.225)
-            ),
-            ToTensorV2()
+        self.transform = transforms.Compose([
+            transforms.Resize((384, 384)),
+            transforms.ToTensor(),
+            transforms.Normalize(
+                mean=[0.485, 0.456, 0.406],
+                std=[0.229, 0.224, 0.225]
+            )
         ])
 
         # -------------------------------
@@ -142,15 +141,9 @@ class EyeDiseaseModel:
     # -----------------------------------------
     def predict(self, image_path):
 
-        image = np.array(
-            Image.open(image_path).convert("RGB")
-        )
+        image = Image.open(image_path).convert("RGB")
 
-        tensor = self.transform(
-            image=image
-        )["image"].unsqueeze(0)
-
-        tensor = tensor.to(self.device)
+        tensor = self.transform(image).unsqueeze(0).to(self.device)
 
         with torch.no_grad():
             logits = self.model(tensor)
