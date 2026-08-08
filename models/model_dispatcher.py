@@ -1,7 +1,6 @@
 from models.chest_xray_model import ChestXRayModel
 from models.eye_disease_model import EyeDiseaseModel
 from models.brain_mri_model import BrainMRIModel
-from models.skin_disease_model import SkinDiseaseModel
 
 class ModelDispatcher:
 
@@ -11,8 +10,7 @@ class ModelDispatcher:
         self.model_classes = {
             "Chest X-ray": ChestXRayModel,
             "Eye Fundus": EyeDiseaseModel,
-            "Brain MRI": BrainMRIModel,
-             "Skin Disease": SkinDiseaseModel
+            "Brain MRI": BrainMRIModel
         }
 
         # Dictionary to store loaded models

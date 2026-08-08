@@ -11,9 +11,6 @@ class ReportGenerator:
         elif image_type == "Brain MRI":
             return self.generate_brain_report(prediction_result)
 
-        elif image_type == "Skin Disease":
-            return self.generate_skin_report(prediction_result)
-
         else:
             return {
                 "image_type": image_type,
@@ -125,45 +122,4 @@ class ReportGenerator:
             "summary": f"The AI model classified the MRI as {disease}.",
             "severity": severity,
             "recommendation": "Consult a neurologist or neurosurgeon for clinical confirmation."
-        }
-
-    # ---------------- Skin Disease ----------------
-
-    def generate_skin_report(self, prediction_result):
-
-        disease = prediction_result["prediction"]
-
-        confidence = prediction_result["confidence"]
-
-        if disease == "Melanoma":
-            severity = "High"
-
-        elif disease == "Basal Cell Carcinoma":
-            severity = "High"
-
-        elif disease == "Actinic Keratosis":
-            severity = "Moderate"
-
-        else:
-            severity = "Low"
-
-        return {
-
-            "image_type": "Skin Disease",
-
-            "predicted_condition": disease,
-
-            "confidence": confidence,
-
-            "summary": (
-                f"The AI model predicts the skin lesion is most consistent with {disease}."
-            ),
-
-            "severity": severity,
-
-            "recommendation": (
-                "Consult a dermatologist for clinical examination and confirmation. "
-                "Do not rely solely on AI predictions for diagnosis."
-            )
-
         }

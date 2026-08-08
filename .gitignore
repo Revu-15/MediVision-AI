@@ -34,7 +34,6 @@ reports/
 BrainMRI/
 CheXficient/
 EyeDisease/
-SkinDisease/
 
 # =====================================================
 # Configuration
@@ -52,7 +51,6 @@ test_medical_llm.py
 brain.jpg
 chest_xray.jpg
 fundus.jpg
-skin.jpg
 
 # =====================================================
 # Large Model Files
@@ -86,5 +84,4 @@ Thumbs.db
 BrainMRI/
 CheXficient/
 EyeDisease/
-SkinDisease/
 database/

@@ -31,7 +31,6 @@ Supports diagnosis using:
 - 🧠 Brain MRI
 - 🫁 Chest X-ray
 - 👁 Eye Disease
-- 🩹 Skin Disease
 
 ### Pipeline
 
@@ -117,7 +116,6 @@ Users can ask follow-up questions regarding
 | Brain MRI | Brain Tumor Classification |
 | Chest X-ray | CheXficient |
 | Eye Disease | Retinal Disease Classifier |
-| Skin Disease | Skin Lesion Classifier |
 
 ---
 
@@ -134,9 +132,6 @@ MediVision_AI/
 │     └── README.md
 │
 ├── EyeDisease/
-│     └── README.md
-│
-├── SkinDisease/
 │     └── README.md
 │
 ├── models/
@@ -167,7 +162,6 @@ Download the required models and place them in the following folders:
 BrainMRI/
 CheXficient/
 EyeDisease/
-SkinDisease/
 ```
 
 ### Models Automatically Downloaded
@@ -233,7 +227,6 @@ Follow the instructions provided in
 BrainMRI/README.md
 CheXficient/README.md
 EyeDisease/README.md
-SkinDisease/README.md
 ```
 
 ---
