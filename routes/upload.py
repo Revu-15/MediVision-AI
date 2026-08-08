@@ -94,12 +94,16 @@ def upload():
             )
 
         except FileNotFoundError as e:
-            missing = str(e).split("'")[-2] if "'" in str(e) else str(e)
-            folder = missing.split("/")[0] if "/" in missing else missing.split("\\")[0]
+            missing = getattr(e, 'filename', None)
+            if not missing:
+                parts = str(e).split("'")
+                missing = parts[1] if len(parts) > 1 else str(e)
+
+            folder = os.path.dirname(missing) if os.path.dirname(missing) else missing.split("/")[0].split("\\")[0]
             error_msg = (
-                f"⚠️ Model files not found: <code>{missing}</code><br><br>"
-                f"Please download the required model files and place them in the "
-                f"<strong>{folder}/</strong> folder. "
+                f"⚠️ Required model file missing: <code>{missing}</code><br><br>"
+                f"Please download the model file and place it in the "
+                f"<strong>{folder}/</strong> directory. "
                 f"See <strong>{folder}/README.md</strong> for download instructions."
             )
             return render_template("upload.html", error=error_msg)
