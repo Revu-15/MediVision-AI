@@ -103,11 +103,16 @@
                     </h3>
                     <form method="POST" enctype="multipart/form-data" id="upload-form">
                         <div class="upload-drag-zone" id="drag-zone">
-                            <i class="fa-solid fa-cloud-arrow-up"></i>
-                            <h3>Drag & Drop Medical Image here</h3>
-                            <p>or click to browse local files</p>
+                            <i class="fa-solid fa-cloud-arrow-up" id="upload-icon"></i>
+                            <h3 id="drag-title">Drag & Drop Medical Image here</h3>
+                            <p id="drag-subtitle">or click to browse local files</p>
                             <p style="font-size: 11px; margin-top: 8px; color: var(--text-muted);">Supported formats: PNG, JPG, JPEG, WEBP</p>
-                            <input type="file" name="image" id="file-input" accept="image/*" required onchange="document.getElementById('upload-form').submit();">
+                            <input type="file" name="image" id="file-input" accept="image/*" required>
+                        </div>
+                        <div style="margin-top: 16px; text-align: center;">
+                            <button type="submit" class="btn btn-primary" id="submit-btn" style="width: 100%; max-width: 320px; font-size: 15px; padding: 12px 24px;">
+                                <i class="fa-solid fa-microchip"></i> Start AI Image Scan
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -232,6 +237,31 @@
     <script>
         const dragZone = document.getElementById('drag-zone');
         const fileInput = document.getElementById('file-input');
+        const dragTitle = document.getElementById('drag-title');
+        const dragSubtitle = document.getElementById('drag-subtitle');
+        const uploadIcon = document.getElementById('upload-icon');
+        const uploadForm = document.getElementById('upload-form');
+        const submitBtn = document.getElementById('submit-btn');
+
+        function updateFilePreview(file) {
+            if (file) {
+                if (dragTitle) dragTitle.textContent = 'Selected: ' + file.name;
+                if (dragSubtitle) dragSubtitle.textContent = (file.size / 1024).toFixed(1) + ' KB - Click "Start AI Image Scan" below';
+                if (uploadIcon) uploadIcon.className = 'fa-solid fa-circle-check';
+                if (dragZone) {
+                    dragZone.style.borderColor = 'var(--success)';
+                    dragZone.style.backgroundColor = 'var(--success-light)';
+                }
+            }
+        }
+
+        if (fileInput) {
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files && e.target.files[0]) {
+                    updateFilePreview(e.target.files[0]);
+                }
+            });
+        }
 
         if (dragZone && fileInput) {
             dragZone.addEventListener('dragover', (e) => {
@@ -248,8 +278,17 @@
 
             dragZone.addEventListener('drop', (e) => {
                 e.preventDefault();
-                fileInput.files = e.dataTransfer.files;
-                document.getElementById('upload-form').submit();
+                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                    fileInput.files = e.dataTransfer.files;
+                    updateFilePreview(e.dataTransfer.files[0]);
+                }
+            });
+        }
+
+        if (uploadForm && submitBtn) {
+            uploadForm.addEventListener('submit', () => {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Analyzing Image with AI...';
             });
         }
     </script>
