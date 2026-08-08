@@ -13,6 +13,9 @@ from models.shared_models import (
 )
 upload_bp = Blueprint("upload", __name__)
 
+# Ensure required directories exist
+os.makedirs("uploads", exist_ok=True)
+os.makedirs("reports", exist_ok=True)
 
 
 @upload_bp.route("/upload", methods=["GET", "POST"])
