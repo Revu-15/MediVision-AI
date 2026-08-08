@@ -173,7 +173,7 @@
                                     <span style="color: var(--secondary);">{{ prediction.confidence }}%</span>
                                 </div>
                                 <div class="confidence-bar-container">
-                                    <div class="confidence-bar-fill" style="width: {{ prediction.confidence }}%;"></div>
+                                    <div class="confidence-bar-fill" style="--confidence-width: {{ prediction.confidence }}%; width: var(--confidence-width, 0%);"></div>
                                 </div>
                             </div>
 
@@ -215,6 +215,13 @@
                         </div>
                     </div>
                 </div>
+                {% if prediction %}
+                <div id="prediction-data"
+                     data-has-prediction="true"
+                     data-disease="{{ prediction.prediction }}"
+                     data-confidence="{{ prediction.confidence }}"
+                     data-image-type="{{ image_type }}">
+                </div>
                 {% endif %}
             </div>
         </main>
@@ -225,23 +232,25 @@
         const dragZone = document.getElementById('drag-zone');
         const fileInput = document.getElementById('file-input');
 
-        dragZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dragZone.style.borderColor = 'var(--primary)';
-            dragZone.style.backgroundColor = 'var(--primary-light)';
-        });
+        if (dragZone && fileInput) {
+            dragZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dragZone.style.borderColor = 'var(--primary)';
+                dragZone.style.backgroundColor = 'var(--primary-light)';
+            });
 
-        dragZone.addEventListener('dragleave', (e) => {
-            e.preventDefault();
-            dragZone.style.borderColor = 'var(--border)';
-            dragZone.style.backgroundColor = 'var(--canvas)';
-        });
+            dragZone.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                dragZone.style.borderColor = 'var(--border)';
+                dragZone.style.backgroundColor = 'var(--canvas)';
+            });
 
-        dragZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            fileInput.files = e.dataTransfer.files;
-            document.getElementById('upload-form').submit();
-        });
+            dragZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileInput.files = e.dataTransfer.files;
+                document.getElementById('upload-form').submit();
+            });
+        }
     </script>
 
     <!-- State & Sidebar wiring -->
@@ -255,33 +264,36 @@
         }
 
         const downloadPdfBtn = document.getElementById('sidebar-download-pdf');
-        if (pdfFile && pdfFile !== '') {
-            downloadPdfBtn.href = '/download/' + pdfFile;
-        } else {
-            downloadPdfBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                alert('No active PDF report found. Please run an image diagnosis first.');
-            });
+        if (downloadPdfBtn) {
+            if (pdfFile && pdfFile !== '') {
+                downloadPdfBtn.href = '/download/' + pdfFile;
+            } else {
+                downloadPdfBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    alert('No active PDF report found. Please run an image diagnosis first.');
+                });
+            }
         }
 
         // Save recent prediction to localStorage
-        {% if prediction %}
-        const currentPrediction = {
-            type: 'image',
-            disease: '{{ prediction.prediction }}',
-            confidence: '{{ prediction.confidence }}',
-            image_type: '{{ image_type }}',
-            pdf: pdfFile ? pdfFile : null,
-            date: new Date().toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            })
-        };
-        localStorage.setItem('recent_prediction', JSON.stringify(currentPrediction));
-        {% endif %}
+        const predDataEl = document.getElementById('prediction-data');
+        if (predDataEl && predDataEl.dataset.hasPrediction === 'true') {
+            const currentPrediction = {
+                type: 'image',
+                disease: predDataEl.dataset.disease,
+                confidence: predDataEl.dataset.confidence,
+                image_type: predDataEl.dataset.imageType,
+                pdf: pdfFile ? pdfFile : null,
+                date: new Date().toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })
+            };
+            localStorage.setItem('recent_prediction', JSON.stringify(currentPrediction));
+        }
     </script>
 </body>
 </html>
