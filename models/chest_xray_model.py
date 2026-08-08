@@ -26,7 +26,11 @@ class ChestXRayModel:
 
         print(f"Device : {self.device}")
 
-        self.repo_id = CHEXFICIENT_PATH
+        if os.path.exists(CHEXFICIENT_PATH) and os.path.exists(os.path.join(CHEXFICIENT_PATH, "config.json")):
+            self.repo_id = CHEXFICIENT_PATH
+        else:
+            print("⏬ Local CheXficient files not found. Using Hugging Face 'StanfordAIMI/CheXficient'...")
+            self.repo_id = "StanfordAIMI/CheXficient"
 
         self.model = AutoModel.from_pretrained(
             self.repo_id,
