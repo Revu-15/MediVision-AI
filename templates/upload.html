@@ -112,6 +112,16 @@
                     </form>
                 </div>
 
+                {% if error %}
+                <div class="card" style="border-left: 4px solid var(--danger); background: var(--danger-light);">
+                    <h3 class="card-title" style="color: var(--danger);">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <span>Error</span>
+                    </h3>
+                    <p style="color: var(--danger); margin-top: 8px;">{{ error | safe }}</p>
+                </div>
+                {% endif %}
+
                 <!-- DIAGNOSIS RESULTS WORKSPACE (Only shown if image is parsed) -->
                 {% if image %}
                 <div class="diagnosis-workspace">
