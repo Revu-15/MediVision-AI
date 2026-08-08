@@ -27,14 +27,10 @@ class BrainMRIModel:
     def predict(self, image_path):
 
         if self.model is not None:
-            from tensorflow.keras.preprocessing import image
+            from PIL import Image
 
-            img = image.load_img(
-                image_path,
-                target_size=(1250, 1250)
-            )
-
-            img_array = image.img_to_array(img) / 255.0
+            pil_img = Image.open(image_path).convert("RGB").resize((1250, 1250))
+            img_array = np.array(pil_img, dtype=np.float32) / 255.0
             img_array = np.expand_dims(img_array, axis=0)
 
             predictions = self.model.predict(img_array, verbose=0)
