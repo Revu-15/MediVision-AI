@@ -186,7 +186,7 @@ No manual setup is required for these models.
 ## Clone Repository
 
 ```bash
-git clone https://github.com/Darchol2677/MediVision-AI.git
+git clone https://github.com/Revu-15/MediVision-AI.git
 
 cd MediVision-AI
 ```
