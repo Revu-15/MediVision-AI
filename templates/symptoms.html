@@ -159,7 +159,7 @@
                                     <span style="color: var(--secondary);">{{ prediction.confidence }}%</span>
                                 </div>
                                 <div class="confidence-bar-container">
-                                    <div class="confidence-bar-fill" style="width: {{ prediction.confidence }}%;"></div>
+                                    <div class="confidence-bar-fill" style="--confidence-width: {{ prediction.confidence }}%; width: var(--confidence-width, 0%);"></div>
                                 </div>
                             </div>
 
@@ -195,6 +195,11 @@
                                 </a>
                             </div>
                         </div>
+                        <div id="symptom-prediction-data"
+                             data-has-prediction="true"
+                             data-disease="{{ prediction.disease }}"
+                             data-confidence="{{ prediction.confidence }}">
+                        </div>
                         {% else %}
                         <div class="empty-state">
                             <i class="fa-solid fa-circle-question"></i>
@@ -209,60 +214,53 @@
         </main>
     </div>
 
-    <!-- Quick Symptom adding JS script -->
     <script>
-        function addSymptom(symptom) {
-            const textarea = document.getElementById('symptoms-input');
-            let currentVal = textarea.value.trim();
-            if (currentVal === "") {
-                textarea.value = symptom;
+        function addSymptom(text) {
+            const input = document.getElementById('symptoms-input');
+            if (!input) return;
+            if (input.value.trim() === '') {
+                input.value = text;
             } else {
-                // If symptom is already there, don't append it
-                if (currentVal.toLowerCase().includes(symptom.toLowerCase())) {
-                    return;
-                }
-                // Check if last char is comma, if not append comma
-                if (currentVal.endsWith(',')) {
-                    textarea.value = currentVal + " " + symptom;
-                } else {
-                    textarea.value = currentVal + ", " + symptom;
+                if (!input.value.includes(text)) {
+                    input.value += ', ' + text;
                 }
             }
-            textarea.focus();
         }
     </script>
 
     <!-- State & Sidebar wiring -->
     <script>
-        // Update PDF download link from localStorage
-        const pdfFile = localStorage.getItem('last_pdf_file');
+        let pdfFile = localStorage.getItem('last_pdf_file') || '';
         const downloadPdfBtn = document.getElementById('sidebar-download-pdf');
-        if (pdfFile && pdfFile !== 'None' && pdfFile !== '') {
-            downloadPdfBtn.href = '/download/' + pdfFile;
-        } else {
-            downloadPdfBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                alert('No active PDF report found. Please run an image diagnosis first.');
-            });
+        if (downloadPdfBtn) {
+            if (pdfFile && pdfFile !== '') {
+                downloadPdfBtn.href = '/download/' + pdfFile;
+            } else {
+                downloadPdfBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    alert('No active PDF report found. Please run an image diagnosis first.');
+                });
+            }
         }
 
         // Save recent prediction to localStorage
-        {% if prediction %}
-        const currentPrediction = {
-            type: 'symptom',
-            disease: '{{ prediction.disease }}',
-            confidence: '{{ prediction.confidence }}',
-            pdf: null,
-            date: new Date().toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            })
-        };
-        localStorage.setItem('recent_prediction', JSON.stringify(currentPrediction));
-        {% endif %}
+        const symDataEl = document.getElementById('symptom-prediction-data');
+        if (symDataEl && symDataEl.dataset.hasPrediction === 'true') {
+            const currentPrediction = {
+                type: 'symptom',
+                disease: symDataEl.dataset.disease,
+                confidence: symDataEl.dataset.confidence,
+                pdf: null,
+                date: new Date().toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })
+            };
+            localStorage.setItem('recent_prediction', JSON.stringify(currentPrediction));
+        }
     </script>
 </body>
 </html>
