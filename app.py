@@ -1,12 +1,15 @@
 from flask import Flask, render_template, session, send_from_directory
 from routes.upload import upload_bp
 import os
+from dotenv import load_dotenv
 from routes.download import download_bp
 from routes.symptoms import symptom_bp
 from routes.chatbot import chatbot_bp
 
+load_dotenv()
+
 app = Flask(__name__)
-app.secret_key = "medivision_ai_secret_key_2026"
+app.secret_key = os.environ.get("SECRET_KEY", "medivision_ai_secret_key_2026")
 
 app.config["UPLOAD_FOLDER"] = "uploads"
 
