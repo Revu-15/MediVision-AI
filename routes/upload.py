@@ -50,7 +50,8 @@ def upload():
             # Disease Prediction
             prediction = dispatcher.predict(
                 image_type=image_type,
-                image_path=save_path
+                image_path=save_path,
+                caption=caption
             )
 
             print("=" * 70)

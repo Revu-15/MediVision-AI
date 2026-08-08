@@ -43,4 +43,4 @@ class ImageRouter:
 
                 return image_type
 
-        return "Unknown"
+        return "General Medical Image"
