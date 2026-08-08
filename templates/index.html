@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediVision AI - AI-Powered Medical Diagnosis Platform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+    <nav>
+        <div class="logo">
+            <i class="fa-solid fa-heart-pulse"></i>
+            <span>MediVision AI</span>
+        </div>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <a href="/dashboard" class="start-btn">Get Started</a>
+    </nav>
+
+    <!-- ================= HERO SECTION ================= -->
+    <section class="hero">
+        <div class="hero-left">
+            <span class="badge">AI-Powered Diagnosis Platform</span>
+            <h1>MediVision AI</h1>
+            <p>Upload medical images or describe symptoms to receive AI-assisted analysis and professional medical reports.</p>
+            
+            <div class="hero-buttons">
+                <a href="/dashboard" class="btn btn-start">Get Started</a>
+                <a href="#features" class="btn btn-learn">Learn More</a>
+            </div>
+
+            <!-- Bullet points below buttons -->
+            <div class="features-checklist">
+                <div class="checklist-item">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>Chest X-ray Analysis</span>
+                </div>
+                <div class="checklist-item">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>Brain MRI Analysis</span>
+                </div>
+                <div class="checklist-item">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>Eye Disease Detection</span>
+                </div>
+                <div class="checklist-item">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>Skin Disease Detection</span>
+                </div>
+                <div class="checklist-item">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>Symptom Diagnosis</span>
+                </div>
+                <div class="checklist-item">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>AI Medical Chat</span>
+                </div>
+                <div class="checklist-item">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>PDF Reports</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-right">
+            <img src="{{ url_for('static', filename='images/hero.png') }}" alt="MediVision AI Health Technology">
+        </div>
+    </section>
+
+    <!-- ================= FEATURES ================= -->
+    <section id="features" class="features">
+        <div class="section-header">
+            <h2>Why Choose MediVision AI</h2>
+            <p>Advanced diagnostic assistant tools powered by deep learning and medical language models.</p>
+        </div>
+        
+        <div class="feature-grid">
+            <div class="feature-card">
+                <i class="fa-solid fa-microscope"></i>
+                <h3>Image Diagnosis</h3>
+                <p>Upload scans, X-rays, or pictures of eye/skin anomalies to get instant detection.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fa-solid fa-notes-medical"></i>
+                <h3>Symptom Analysis</h3>
+                <p>Describe what you feel, and receive AI-backed disease predictions and diagnostic reasoning.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fa-solid fa-comments"></i>
+                <h3>AI Medical Chat</h3>
+                <p>Engage in secure dialogues with our AI chatbot to understand your medical report in detail.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fa-solid fa-file-pdf"></i>
+                <h3>PDF Export</h3>
+                <p>Download diagnostic findings instantly as a formatted professional medical report.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= FOOTER ================= -->
+    <footer id="contact">
+        <h2>MediVision AI</h2>
+        <p>AI-assisted medical diagnosis and information platform.</p>
+        <div class="social-links">
+            <a href="#"><i class="fa-brands fa-github"></i></a>
+            <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+            <a href="#"><i class="fa-solid fa-envelope"></i></a>
+        </div>
+        <div class="copyright">
+            © 2026 MediVision AI. All rights reserved. For informational and educational purposes only.
+        </div>
+    </footer>
+
+</body>
+</html>

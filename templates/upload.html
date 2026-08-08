@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediVision AI - Image Diagnosis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="dashboard-layout">
+        <!-- ================= SIDEBAR ================= -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-heart-pulse"></i>
+                <span>MediVision AI</span>
+            </div>
+
+            <!-- Profile Info -->
+            <div class="sidebar-profile">
+                <img src="{{ url_for('static', filename='images/user.png') }}" alt="User Profile">
+                <div class="profile-info">
+                    <span class="profile-name">Yash Profile</span>
+                    <span class="profile-role">Medical Staff</span>
+                </div>
+            </div>
+
+            <!-- Menu Links -->
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="/dashboard">
+                        <i class="fa-solid fa-house"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="/upload">
+                        <i class="fa-solid fa-dharmachakra"></i>
+                        <span>Image Diagnosis</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/symptoms">
+                        <i class="fa-solid fa-stethoscope"></i>
+                        <span>Symptom Diagnosis</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/chatbot">
+                        <i class="fa-solid fa-comments"></i>
+                        <span>AI Chat</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/report">
+                        <i class="fa-solid fa-file-medical"></i>
+                        <span>Medical Report</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="sidebar-download-pdf">
+                        <i class="fa-solid fa-file-pdf"></i>
+                        <span>Download PDF</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/settings">
+                        <i class="fa-solid fa-gear"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <p>v1.2.0 • Light Theme</p>
+            </div>
+        </aside>
+
+        <!-- ================= MAIN CANVAS ================= -->
+        <main class="main-canvas">
+            <!-- Top Header -->
+            <header class="topbar">
+                <div class="page-title">
+                    <h1>Image Diagnosis Module</h1>
+                </div>
+                <div class="right-actions">
+                    <div class="notification-bell" title="System Notifications">
+                        <i class="fa-regular fa-bell"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Workspace Content -->
+            <div class="workspace">
+                <div class="card">
+                    <h3 class="card-title">
+                        <i class="fa-solid fa-upload"></i>
+                        <span>Upload Medical Image</span>
+                    </h3>
+                    <form method="POST" enctype="multipart/form-data" id="upload-form">
+                        <div class="upload-drag-zone" id="drag-zone">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <h3>Drag & Drop Medical Image here</h3>
+                            <p>or click to browse local files</p>
+                            <p style="font-size: 11px; margin-top: 8px; color: var(--text-muted);">Supported formats: PNG, JPG, JPEG</p>
+                            <input type="file" name="image" id="file-input" required onchange="document.getElementById('upload-form').submit();">
+                        </div>
+                    </form>
+                </div>
+
+                <!-- DIAGNOSIS RESULTS WORKSPACE (Only shown if image is parsed) -->
+                {% if image %}
+                <div class="diagnosis-workspace">
+                    <!-- Left Column: Image & Basic Captions -->
+                    <div class="card">
+                        <h3 class="card-title">
+                            <i class="fa-solid fa-image"></i>
+                            <span>Uploaded Image Preview</span>
+                        </h3>
+                        <div class="image-preview-container">
+                            <img src="{{ url_for('uploaded_file', filename=image) }}" alt="Medical Image Preview">
+                        </div>
+                        
+                        <div style="margin-top: 24px;" class="diagnosis-metrics">
+                            <div class="metric-row">
+                                <span class="metric-label">Florence-2 Caption:</span>
+                                <span class="metric-value" style="font-style: italic; font-weight: normal; color: var(--text-muted);">
+                                    {{ caption }}
+                                </span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Detected Scan Type:</span>
+                                <span class="metric-value result-badge" style="background-color: var(--primary-light); color: var(--primary);">
+                                    {{ image_type }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: AI Analysis & Action Shortcuts -->
+                    <div class="card">
+                        <h3 class="card-title">
+                            <i class="fa-solid fa-brain"></i>
+                            <span>AI Diagnosis Findings</span>
+                        </h3>
+
+                        <div class="diagnosis-metrics">
+                            <div class="metric-row" style="border-bottom: none;">
+                                <span class="metric-label">Top Diagnosis:</span>
+                                <span class="metric-value" style="font-size: 20px; color: var(--primary); font-weight: 700;">
+                                    {{ prediction.prediction }}
+                                </span>
+                            </div>
+                            
+                            <!-- Confidence fill bar -->
+                            <div>
+                                <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-bottom: 4px;">
+                                    <span>Confidence Level</span>
+                                    <span style="color: var(--secondary);">{{ prediction.confidence }}%</span>
+                                </div>
+                                <div class="confidence-bar-container">
+                                    <div class="confidence-bar-fill" style="width: {{ prediction.confidence }}%;"></div>
+                                </div>
+                            </div>
+
+                            <!-- Top Predictions Table -->
+                            <div style="margin-top: 15px;">
+                                <strong style="font-size: 13px; color: var(--text-muted);">Alternative Diagnosis Probabilities:</strong>
+                                <table class="predictions-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Disease</th>
+                                            <th style="text-align: right;">Confidence</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in prediction.top_predictions %}
+                                        <tr>
+                                            <td>{{ item[0] }}</td>
+                                            <td style="text-align: right; font-weight: 600; color: var(--text-muted);">{{ item[1] }}%</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Actions Row -->
+                            <div style="margin-top: 24px; display: flex; gap: 12px; border-top: 1px solid var(--border); padding-top: 20px;">
+                                <a href="/report" class="btn btn-secondary" style="flex: 1;">
+                                    <i class="fa-solid fa-file-medical"></i> View Report
+                                </a>
+                                {% if pdf_file %}
+                                <a href="{{ url_for('download.download_report', filename=pdf_file) }}" class="btn btn-primary" style="flex: 1;">
+                                    <i class="fa-solid fa-file-pdf"></i> Download PDF
+                                </a>
+                                {% endif %}
+                                <a href="/chatbot" class="btn btn-success" style="flex: 1;">
+                                    <i class="fa-solid fa-comments"></i> Ask AI
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+
+    <!-- Drag and drop zone script -->
+    <script>
+        const dragZone = document.getElementById('drag-zone');
+        const fileInput = document.getElementById('file-input');
+
+        dragZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dragZone.style.borderColor = 'var(--primary)';
+            dragZone.style.backgroundColor = 'var(--primary-light)';
+        });
+
+        dragZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dragZone.style.borderColor = 'var(--border)';
+            dragZone.style.backgroundColor = 'var(--canvas)';
+        });
+
+        dragZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileInput.files = e.dataTransfer.files;
+            document.getElementById('upload-form').submit();
+        });
+    </script>
+
+    <!-- State & Sidebar wiring -->
+    <script>
+        // Update PDF download link from localStorage
+        let pdfFile = '{{ pdf_file if pdf_file else "" }}';
+        if (pdfFile && pdfFile !== 'None' && pdfFile !== '') {
+            localStorage.setItem('last_pdf_file', pdfFile);
+        } else {
+            pdfFile = localStorage.getItem('last_pdf_file') || '';
+        }
+
+        const downloadPdfBtn = document.getElementById('sidebar-download-pdf');
+        if (pdfFile && pdfFile !== '') {
+            downloadPdfBtn.href = '/download/' + pdfFile;
+        } else {
+            downloadPdfBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('No active PDF report found. Please run an image diagnosis first.');
+            });
+        }
+
+        // Save recent prediction to localStorage
+        {% if prediction %}
+        const currentPrediction = {
+            type: 'image',
+            disease: '{{ prediction.prediction }}',
+            confidence: '{{ prediction.confidence }}',
+            image_type: '{{ image_type }}',
+            pdf: pdfFile ? pdfFile : null,
+            date: new Date().toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            })
+        };
+        localStorage.setItem('recent_prediction', JSON.stringify(currentPrediction));
+        {% endif %}
+    </script>
+</body>
+</html>

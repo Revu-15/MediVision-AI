@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediVision AI - Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="dashboard-layout">
+        <!-- ================= SIDEBAR ================= -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-heart-pulse"></i>
+                <span>MediVision AI</span>
+            </div>
+
+            <!-- Profile Info -->
+            <div class="sidebar-profile">
+                <img src="{{ url_for('static', filename='images/user.png') }}" alt="User Profile">
+                <div class="profile-info">
+                    <span class="profile-name">Yash Profile</span>
+                    <span class="profile-role">Medical Staff</span>
+                </div>
+            </div>
+
+            <!-- Menu Links -->
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="/dashboard">
+                        <i class="fa-solid fa-house"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/upload">
+                        <i class="fa-solid fa-dharmachakra"></i>
+                        <span>Image Diagnosis</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/symptoms">
+                        <i class="fa-solid fa-stethoscope"></i>
+                        <span>Symptom Diagnosis</span>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="/chatbot">
+                        <i class="fa-solid fa-comments"></i>
+                        <span>AI Chat</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/report">
+                        <i class="fa-solid fa-file-medical"></i>
+                        <span>Medical Report</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="sidebar-download-pdf">
+                        <i class="fa-solid fa-file-pdf"></i>
+                        <span>Download PDF</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/settings">
+                        <i class="fa-solid fa-gear"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <p>v1.2.0 • Light Theme</p>
+            </div>
+        </aside>
+
+        <!-- ================= MAIN CANVAS ================= -->
+        <main class="main-canvas">
+            <!-- Top Header -->
+            <header class="topbar">
+                <div class="page-title">
+                    <h1>Medical AI Chat</h1>
+                </div>
+                <div class="right-actions">
+                    <div class="notification-bell" title="System Notifications">
+                        <i class="fa-regular fa-bell"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Workspace Content -->
+            <div class="workspace">
+                
+                <!-- ChatGPT Style Chatbox Container -->
+                <div class="chatbot-container">
+                    <div class="chatbot-header">
+                        <i class="fa-solid fa-robot"></i>
+                        <div>
+                            <h3 style="margin: 0; font-size: 15px;">Clinical AI Assistant</h3>
+                            <span style="font-size: 11px; color: var(--secondary); font-weight: 600;">
+                                {% if report %}
+                                    <i class="fa-solid fa-circle" style="font-size: 8px;"></i> Connected to Medical Report
+                                {% else %}
+                                    <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 8px; color: var(--text-muted);"></i> General Medical Knowledge (No Active Report)
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Chat Bubbles Thread -->
+                    <div class="chat-history" id="chat-thread">
+                        <!-- Initial message is generated by JS or loaded from history -->
+                    </div>
+
+                    <!-- Form / Input Area -->
+                    <form id="chat-form" method="POST" style="margin: 0;">
+                        <div class="chat-input-bar">
+                            <input 
+                                type="text" 
+                                name="question" 
+                                id="chat-input" 
+                                placeholder="Ask a question about your diagnosis, precautions, exercises..." 
+                                autocomplete="off"
+                                required>
+                            <button type="submit" class="btn btn-primary" style="padding: 12px 20px;">
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Hidden element containing the server-side generated answer (if submitted normally) -->
+    <div id="server-raw-answer" style="display: none;">{{ answer if answer else '' }}</div>
+
+    <!-- ChatGPT Thread Manager Script -->
+    <script>
+        const chatThread = document.getElementById('chat-thread');
+        const chatForm = document.getElementById('chat-form');
+        const chatInput = document.getElementById('chat-input');
+
+        // Load conversation history from sessionStorage
+        let chatHistory = JSON.parse(sessionStorage.getItem('medivision_chat_history') || '[]');
+
+        // Initialize Chat Thread
+        function initChat() {
+            chatThread.innerHTML = '';
+            
+            // If history is empty, add a default greeting
+            if (chatHistory.length === 0) {
+                const greeting = {
+                    sender: 'ai',
+                    text: {% if report %} "Based on your clinical report, I've loaded your diagnosis details. Feel free to ask me questions like: 'Can I exercise?', 'What are the main causes?', or 'What specialists should I see?'" {% else %} "Hello! I am your medical AI assistant. Please generate a diagnosis report from the Image or Symptom modules first so I can assist you with specific questions regarding your condition." {% endif %}
+                };
+                chatHistory.push(greeting);
+                saveHistory();
+            }
+
+            chatHistory.forEach(msg => {
+                appendBubble(msg.sender, msg.text);
+            });
+            scrollToBottom();
+        }
+
+        function saveHistory() {
+            sessionStorage.setItem('medivision_chat_history', JSON.stringify(chatHistory));
+        }
+
+        function appendBubble(sender, text) {
+            const bubble = document.createElement('div');
+            bubble.classList.add('chat-bubble', sender);
+            
+            // Format line breaks or bullet points if any
+            bubble.innerText = text;
+            
+            chatThread.appendChild(bubble);
+            scrollToBottom();
+        }
+
+        function appendTypingIndicator() {
+            const indicator = document.createElement('div');
+            indicator.classList.add('chat-bubble', 'ai');
+            indicator.id = 'typing-indicator';
+            indicator.innerHTML = `
+                <div class="typing-indicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            `;
+            chatThread.appendChild(indicator);
+            scrollToBottom();
+        }
+
+        function removeTypingIndicator() {
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator) {
+                indicator.remove();
+            }
+        }
+
+        function scrollToBottom() {
+            chatThread.scrollTop = chatThread.scrollHeight;
+        }
+
+        // Intercept Form Submit to execute Fetch request and keep history
+        chatForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const questionText = chatInput.value.trim();
+            if (!questionText) return;
+
+            // Clear Input
+            chatInput.value = '';
+
+            // Add user bubble
+            appendBubble('user', questionText);
+            chatHistory.push({ sender: 'user', text: questionText });
+            saveHistory();
+
+            // Add typing indicator
+            appendTypingIndicator();
+
+            // Post Form Data using Fetch
+            const formData = new FormData();
+            formData.append('question', questionText);
+
+            fetch('/chatbot', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(html => {
+                removeTypingIndicator();
+                
+                // Parse HTML response and extract the answer
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const rawAnswerEl = doc.getElementById('server-raw-answer');
+                let answerText = rawAnswerEl ? rawAnswerEl.innerText.trim() : '';
+
+                if (!answerText) {
+                    answerText = "I apologize, but I encountered an issue retrieving the clinical answer. Please try again.";
+                }
+
+                // Add AI bubble
+                appendBubble('ai', answerText);
+                chatHistory.push({ sender: 'ai', text: answerText });
+                saveHistory();
+            })
+            .catch(err => {
+                console.error("Chat error:", err);
+                removeTypingIndicator();
+                appendBubble('ai', "Error connecting to clinical AI chatbot. Please verify server connection.");
+            });
+        });
+
+        // Load chat history on DOM ready
+        document.addEventListener('DOMContentLoaded', initChat);
+    </script>
+
+    <!-- State & Sidebar wiring -->
+    <script>
+        // Update PDF download link from localStorage
+        const pdfFile = localStorage.getItem('last_pdf_file');
+        const downloadPdfBtn = document.getElementById('sidebar-download-pdf');
+        if (pdfFile && pdfFile !== 'None' && pdfFile !== '') {
+            downloadPdfBtn.href = '/download/' + pdfFile;
+        } else {
+            downloadPdfBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('No active PDF report found. Please run an image diagnosis first.');
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediVision AI - Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="dashboard-layout">
+        <!-- ================= SIDEBAR ================= -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-heart-pulse"></i>
+                <span>MediVision AI</span>
+            </div>
+
+            <!-- Profile Info -->
+            <div class="sidebar-profile">
+                <img src="{{ url_for('static', filename='images/user.png') }}" alt="User Profile">
+                <div class="profile-info">
+                    <span class="profile-name">Yash Profile</span>
+                    <span class="profile-role">Medical Staff</span>
+                </div>
+            </div>
+
+            <!-- Menu Links -->
+            <ul class="sidebar-menu">
+                <li class="active">
+                    <a href="/dashboard">
+                        <i class="fa-solid fa-house"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/upload">
+                        <i class="fa-solid fa-dharmachakra"></i>
+                        <span>Image Diagnosis</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/symptoms">
+                        <i class="fa-solid fa-stethoscope"></i>
+                        <span>Symptom Diagnosis</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/chatbot">
+                        <i class="fa-solid fa-comments"></i>
+                        <span>AI Chat</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/report">
+                        <i class="fa-solid fa-file-medical"></i>
+                        <span>Medical Report</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="sidebar-download-pdf">
+                        <i class="fa-solid fa-file-pdf"></i>
+                        <span>Download PDF</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/settings">
+                        <i class="fa-solid fa-gear"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <p>v1.2.0 • Light Theme</p>
+            </div>
+        </aside>
+
+        <!-- ================= MAIN CANVAS ================= -->
+        <main class="main-canvas">
+            <!-- Top Header -->
+            <header class="topbar">
+                <div class="page-title">
+                    <h1>Clinical Dashboard</h1>
+                </div>
+                <div class="right-actions">
+                    <div class="notification-bell" title="System Notifications">
+                        <i class="fa-regular fa-bell"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Workspace Content -->
+            <div class="workspace">
+                <!-- Welcome Banner -->
+                <div class="dashboard-welcome">
+                    <div>
+                        <h2>Welcome Back 👋</h2>
+                        <p>Access state-of-the-art medical diagnostics modules powered by Artificial Intelligence.</p>
+                    </div>
+                    <img src="{{ url_for('static', filename='images/doctor.png') }}" alt="Medical Doctor Advisor">
+                </div>
+
+                <!-- Quick Diagnosis Actions -->
+                <div class="quick-actions">
+                    <div class="action-card" onclick="location.href='/upload'">
+                        <div class="icon-box">
+                            <i class="fa-solid fa-upload"></i>
+                        </div>
+                        <h3>Upload Medical Image</h3>
+                        <p>Analyze MRI scans, Chest X-rays, skin diseases, or eye anomalies using vision transformers.</p>
+                        <button class="btn btn-primary">Start Image Scan</button>
+                    </div>
+                    
+                    <div class="action-card" onclick="location.href='/symptoms'">
+                        <div class="icon-box">
+                            <i class="fa-solid fa-notes-medical"></i>
+                        </div>
+                        <h3>Enter Symptoms</h3>
+                        <p>Provide comma-separated diagnostic indications to generate predictions from the medical model.</p>
+                        <button class="btn btn-success">Analyze Symptoms</button>
+                    </div>
+                </div>
+
+                <!-- Supported Diseases -->
+                <div class="card">
+                    <h3 class="card-title">
+                        <i class="fa-solid fa-virus-covid"></i>
+                        <span>Supported Medical AI Modules</span>
+                    </h3>
+                    <div class="diseases-grid">
+                        <div class="disease-item">
+                            <span class="icon">🧠</span>
+                            <div>
+                                <h4>Brain MRI</h4>
+                            </div>
+                        </div>
+                        <div class="disease-item">
+                            <span class="icon">🫁</span>
+                            <div>
+                                <h4>Chest X-ray</h4>
+                            </div>
+                        </div>
+                        <div class="disease-item">
+                            <span class="icon">👁</span>
+                            <div>
+                                <h4>Eye Disease</h4>
+                            </div>
+                        </div>
+                        <div class="disease-item">
+                            <span class="icon">🩹</span>
+                            <div>
+                                <h4>Skin Disease</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent AI Result Section -->
+                <div class="card" id="recent-result-section">
+                    <h3 class="card-title">
+                        <i class="fa-solid fa-clock-history"></i>
+                        <span>Recent AI Diagnosis Result</span>
+                    </h3>
+                    
+                    <!-- Managed dynamically by JavaScript -->
+                    <div id="recent-result-content">
+                        <div class="empty-state" style="padding: 30px;">
+                            <i class="fa-solid fa-folder-open" style="font-size: 40px; margin-bottom: 12px; color: var(--text-muted);"></i>
+                            <p>No recent diagnosis data found in this session.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- State & Sidebar wiring -->
+    <script>
+        // Update PDF download link from localStorage
+        const pdfFile = localStorage.getItem('last_pdf_file');
+        const downloadPdfBtn = document.getElementById('sidebar-download-pdf');
+        
+        if (pdfFile && pdfFile !== 'None') {
+            downloadPdfBtn.href = '/download/' + pdfFile;
+        } else {
+            downloadPdfBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('No active PDF report found. Please run an image diagnosis first.');
+            });
+        }
+
+        // Render Recent AI Result dynamically from localStorage
+        const recentPredictionStr = localStorage.getItem('recent_prediction');
+        if (recentPredictionStr) {
+            try {
+                const prediction = JSON.parse(recentPredictionStr);
+                const contentDiv = document.getElementById('recent-result-content');
+                
+                contentDiv.innerHTML = `
+                    <div class="recent-result-card" style="border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; background-color: var(--canvas);">
+                        <div class="recent-result-header" style="border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                            <strong style="font-size: 15px; color: var(--primary); text-transform: uppercase;">
+                                <i class="${prediction.type === 'image' ? 'fa-solid fa-image' : 'fa-solid fa-notes-medical'}"></i> 
+                                ${prediction.type} Diagnosis
+                            </strong>
+                            <span style="font-size: 12px; color: var(--text-muted);">${prediction.date}</span>
+                        </div>
+                        <div class="recent-result-body" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                            <div>
+                                <h4 style="font-size: 18px; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">
+                                    ${prediction.disease}
+                                </h4>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span class="result-badge">${prediction.confidence}% Confidence</span>
+                                    ${prediction.image_type ? `<span style="font-size: 12px; color: var(--text-muted);">Type: ${prediction.image_type}</span>` : ''}
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <a href="/report" class="btn btn-secondary" style="padding: 8px 16px; font-size: 13px;">View Full Report</a>
+                                ${prediction.pdf ? `<a href="/download/${prediction.pdf}" class="btn btn-primary" style="padding: 8px 16px; font-size: 13px;"><i class="fa-solid fa-file-pdf"></i> PDF</a>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } catch (err) {
+                console.error("Error parsing recent prediction from localStorage:", err);
+            }
+        }
+    </script>
+</body>
+</html>

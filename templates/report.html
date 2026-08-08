@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediVision AI - Medical Report</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="dashboard-layout">
+        <!-- ================= SIDEBAR ================= -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-heart-pulse"></i>
+                <span>MediVision AI</span>
+            </div>
+
+            <!-- Profile Info -->
+            <div class="sidebar-profile">
+                <img src="{{ url_for('static', filename='images/user.png') }}" alt="User Profile">
+                <div class="profile-info">
+                    <span class="profile-name">Yash Profile</span>
+                    <span class="profile-role">Medical Staff</span>
+                </div>
+            </div>
+
+            <!-- Menu Links -->
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="/dashboard">
+                        <i class="fa-solid fa-house"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/upload">
+                        <i class="fa-solid fa-dharmachakra"></i>
+                        <span>Image Diagnosis</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/symptoms">
+                        <i class="fa-solid fa-stethoscope"></i>
+                        <span>Symptom Diagnosis</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/chatbot">
+                        <i class="fa-solid fa-comments"></i>
+                        <span>AI Chat</span>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="/report">
+                        <i class="fa-solid fa-file-medical"></i>
+                        <span>Medical Report</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="sidebar-download-pdf">
+                        <i class="fa-solid fa-file-pdf"></i>
+                        <span>Download PDF</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/settings">
+                        <i class="fa-solid fa-gear"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <p>v1.2.0 • Light Theme</p>
+            </div>
+        </aside>
+
+        <!-- ================= MAIN CANVAS ================= -->
+        <main class="main-canvas">
+            <!-- Top Header -->
+            <header class="topbar">
+                <div class="page-title">
+                    <h1>Clinical Analysis Report</h1>
+                </div>
+                <div class="right-actions">
+                    <div class="notification-bell" title="System Notifications">
+                        <i class="fa-regular fa-bell"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Workspace Content -->
+            <div class="workspace">
+                
+                {% if report %}
+                    
+                    <!-- Emergency Alert (Shown at the very top if active) -->
+                    {% if report.emergency_warning %}
+                    <div class="emergency-card">
+                        <div class="emergency-title">
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                            <span>🚨 EMERGENCY WARNING</span>
+                        </div>
+                        <div class="emergency-content">
+                            {{ report.emergency_warning }}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Report Grid of Cards -->
+                    <div class="report-grid">
+                        
+                        <!-- 1. Disease Overview -->
+                        <div class="report-card report-grid-full">
+                            <div class="report-card-title">
+                                <i class="fa-solid fa-file-invoice"></i>
+                                <span>Disease Overview</span>
+                            </div>
+                            <div class="report-card-content">
+                                {{ report.overview }}
+                            </div>
+                        </div>
+
+                        <!-- 2. Symptoms -->
+                        <div class="report-card">
+                            <div class="report-card-title">
+                                <i class="fa-solid fa-list-check"></i>
+                                <span>Common Symptoms</span>
+                            </div>
+                            <div class="report-card-content">
+                                <ul>
+                                    {% for item in report.symptoms %}
+                                        <li>{{ item }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- 3. Causes -->
+                        <div class="report-card">
+                            <div class="report-card-title">
+                                <i class="fa-solid fa-microscope"></i>
+                                <span>Primary Causes</span>
+                            </div>
+                            <div class="report-card-content">
+                                <ul>
+                                    {% for item in report.causes %}
+                                        <li>{{ item }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- 4. Risk Factors -->
+                        <div class="report-card">
+                            <div class="report-card-title">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                <span>Risk Factors</span>
+                            </div>
+                            <div class="report-card-content">
+                                <ul>
+                                    {% for item in report.risk_factors %}
+                                        <li>{{ item }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- 5. Possible Complications -->
+                        <div class="report-card">
+                            <div class="report-card-title">
+                                <i class="fa-solid fa-shield-virus"></i>
+                                <span>Possible Complications</span>
+                            </div>
+                            <div class="report-card-content">
+                                <ul>
+                                    {% for item in report.complications %}
+                                        <li>{{ item }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- 6. Diagnostic Tests -->
+                        <div class="report-card">
+                            <div class="report-card-title">
+                                <i class="fa-solid fa-vial-medical"></i>
+                                <span>Recommended Diagnostic Tests</span>
+                            </div>
+                            <div class="report-card-content">
+                                <ul>
+                                    {% for item in report.diagnostic_tests %}
+                                        <li>{{ item }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- 7. Precautions -->
+                        <div class="report-card">
+                            <div class="report-card-title">
+                                <i class="fa-solid fa-shield-halved"></i>
+                                <span>Precautions</span>
+                            </div>
+                            <div class="report-card-content">
+                                <ul>
+                                    {% for item in report.precautions %}
+                                        <li>{{ item }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- 8. Treatment (Full width) -->
+                        <div class="report-card report-grid-full">
+                            <div class="report-card-title">
+                                <i class="fa-solid fa-pills"></i>
+                                <span>Treatment & Interventions</span>
+                            </div>
+                            <div class="report-card-content">
+                                {{ report.treatment }}
+                            </div>
+                        </div>
+
+                        <!-- 9. Recommended Specialist -->
+                        <div class="report-card report-grid-full" style="flex-direction: row; align-items: center; justify-content: space-between;">
+                            <div style="display: flex; align-items: center; gap: 14px;">
+                                <div style="width: 48px; height: 48px; background-color: var(--primary-light); color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                                    <i class="fa-solid fa-user-doctor"></i>
+                                </div>
+                                <div>
+                                    <strong style="font-size: 14px; color: var(--text-muted); display: block;">Recommended Specialist</strong>
+                                    <span style="font-size: 16px; font-weight: 700; color: var(--text-main);">{{ report.specialist }}</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 12px;">
+                                <a href="#" id="view-report-pdf-btn" class="btn btn-primary" style="display: none;">
+                                    <i class="fa-solid fa-file-pdf"></i> Download PDF
+                                </a>
+                                <a href="/chatbot" class="btn btn-success">
+                                    <i class="fa-solid fa-comments"></i> Ask AI Chatbot
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Disclaimer -->
+                    <div class="disclaimer-box">
+                        <strong>Disclaimer:</strong> {{ report.disclaimer }}
+                    </div>
+
+                {% else %}
+                    <!-- Empty State if no report exists -->
+                    <div class="empty-state">
+                        <i class="fa-solid fa-folder-open"></i>
+                        <h2>No Active Medical Report</h2>
+                        <p>You haven't run any AI diagnoses in this session yet. Complete an image analysis or enter symptoms to view a detailed clinical report.</p>
+                        <div style="display: flex; gap: 16px; justify-content: center; margin-top: 10px;">
+                            <a href="/upload" class="btn btn-primary">Image Diagnosis</a>
+                            <a href="/symptoms" class="btn btn-success">Symptom Checker</a>
+                        </div>
+                    </div>
+                {% endif %}
+
+            </div>
+        </main>
+    </div>
+
+    <!-- State & Sidebar wiring -->
+    <script>
+        // Update PDF download link from localStorage
+        const pdfFile = localStorage.getItem('last_pdf_file');
+        const downloadPdfBtn = document.getElementById('sidebar-download-pdf');
+        const inlinePdfBtn = document.getElementById('view-report-pdf-btn');
+        
+        if (pdfFile && pdfFile !== 'None' && pdfFile !== '') {
+            const pdfUrl = '/download/' + pdfFile;
+            downloadPdfBtn.href = pdfUrl;
+            if (inlinePdfBtn) {
+                inlinePdfBtn.href = pdfUrl;
+                inlinePdfBtn.style.display = 'inline-flex';
+            }
+        } else {
+            downloadPdfBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('No active PDF report found. Please run an image diagnosis first.');
+            });
+        }
+    </script>
+</body>
+</html>

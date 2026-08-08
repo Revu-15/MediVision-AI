@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediVision AI - Symptom Diagnosis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="dashboard-layout">
+        <!-- ================= SIDEBAR ================= -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-heart-pulse"></i>
+                <span>MediVision AI</span>
+            </div>
+
+            <!-- Profile Info -->
+            <div class="sidebar-profile">
+                <img src="{{ url_for('static', filename='images/user.png') }}" alt="User Profile">
+                <div class="profile-info">
+                    <span class="profile-name">Yash Profile</span>
+                    <span class="profile-role">Medical Staff</span>
+                </div>
+            </div>
+
+            <!-- Menu Links -->
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="/dashboard">
+                        <i class="fa-solid fa-house"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/upload">
+                        <i class="fa-solid fa-dharmachakra"></i>
+                        <span>Image Diagnosis</span>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="/symptoms">
+                        <i class="fa-solid fa-stethoscope"></i>
+                        <span>Symptom Diagnosis</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/chatbot">
+                        <i class="fa-solid fa-comments"></i>
+                        <span>AI Chat</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/report">
+                        <i class="fa-solid fa-file-medical"></i>
+                        <span>Medical Report</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="sidebar-download-pdf">
+                        <i class="fa-solid fa-file-pdf"></i>
+                        <span>Download PDF</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/settings">
+                        <i class="fa-solid fa-gear"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <p>v1.2.0 • Light Theme</p>
+            </div>
+        </aside>
+
+        <!-- ================= MAIN CANVAS ================= -->
+        <main class="main-canvas">
+            <!-- Top Header -->
+            <header class="topbar">
+                <div class="page-title">
+                    <h1>Symptom Checker Module</h1>
+                </div>
+                <div class="right-actions">
+                    <div class="notification-bell" title="System Notifications">
+                        <i class="fa-regular fa-bell"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Workspace Content -->
+            <div class="workspace">
+                <div class="diagnosis-workspace" style="grid-template-columns: 1fr 1fr;">
+                    
+                    <!-- Left Column: Symptoms Input Form -->
+                    <div class="card">
+                        <h3 class="card-title">
+                            <i class="fa-solid fa-notes-medical"></i>
+                            <span>Describe Patient Symptoms</span>
+                        </h3>
+                        
+                        <form method="POST">
+                            <label for="symptoms-input" style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 8px;">
+                                Enter clinical notes or comma-separated symptoms:
+                            </label>
+                            <textarea 
+                                name="symptoms" 
+                                id="symptoms-input" 
+                                rows="6" 
+                                class="symptoms-textarea"
+                                placeholder="Example: High fever, chest pain, dry cough, breathing difficulty"
+                                required>{{ symptoms if symptoms else '' }}</textarea>
+                            
+                            <!-- Quick Examples Selection -->
+                            <div style="margin-bottom: 20px;">
+                                <strong style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 8px;">Quick Suggestions:</strong>
+                                <div class="symptom-suggestions">
+                                    <span class="symptom-tag" onclick="addSymptom('High fever')">High fever</span>
+                                    <span class="symptom-tag" onclick="addSymptom('Chest pain')">Chest pain</span>
+                                    <span class="symptom-tag" onclick="addSymptom('Cough')">Cough</span>
+                                    <span class="symptom-tag" onclick="addSymptom('Difficulty breathing')">Difficulty breathing</span>
+                                    <span class="symptom-tag" onclick="addSymptom('Headache')">Headache</span>
+                                    <span class="symptom-tag" onclick="addSymptom('Fatigue')">Fatigue</span>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                                <i class="fa-solid fa-microchip"></i> Run AI Diagnosis
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Right Column: Results (if processed) -->
+                    <div class="card">
+                        <h3 class="card-title">
+                            <i class="fa-solid fa-stethoscope"></i>
+                            <span>Diagnosis & Prediction</span>
+                        </h3>
+
+                        {% if prediction %}
+                        <div class="diagnosis-metrics">
+                            <div class="metric-row">
+                                <span class="metric-label">Predicted Disease:</span>
+                                <span class="metric-value" style="font-size: 18px; color: var(--primary); font-weight: 700;">
+                                    {{ prediction.disease }}
+                                </span>
+                            </div>
+
+                            <!-- Confidence Display -->
+                            <div>
+                                <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-bottom: 4px;">
+                                    <span>Confidence Score</span>
+                                    <span style="color: var(--secondary);">{{ prediction.confidence }}%</span>
+                                </div>
+                                <div class="confidence-bar-container">
+                                    <div class="confidence-bar-fill" style="width: {{ prediction.confidence }}%;"></div>
+                                </div>
+                            </div>
+
+                            <!-- Diagnostic Reasoning Card -->
+                            <div style="background-color: var(--canvas); padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--border); margin-top: 10px;">
+                                <strong style="font-size: 13px; color: var(--text-main); display: block; margin-bottom: 6px;">Clinical Reasoning:</strong>
+                                <p style="font-size: 13.5px; line-height: 1.6; color: var(--text-muted);">
+                                    {{ prediction.reasoning }}
+                                </p>
+                            </div>
+
+                            <!-- Possible Alternative Diseases list -->
+                            {% if prediction.possible_diseases %}
+                            <div style="margin-top: 15px;">
+                                <strong style="font-size: 12px; color: var(--text-muted);">Differential Diagnoses:</strong>
+                                <ul style="margin-top: 8px; list-style: none;">
+                                    {% for disease in prediction.possible_diseases %}
+                                    <li style="font-size: 13.5px; padding: 6px 12px; margin-bottom: 6px; background-color: var(--canvas); border-radius: var(--radius-sm); border-left: 3px solid var(--primary); color: var(--text-main);">
+                                        {{ disease }}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endif %}
+
+                            <!-- Action Buttons -->
+                            <div style="margin-top: 24px; display: flex; gap: 12px; border-top: 1px solid var(--border); padding-top: 20px;">
+                                <a href="/report" class="btn btn-secondary" style="flex: 1;">
+                                    <i class="fa-solid fa-file-medical"></i> View Report
+                                </a>
+                                <a href="/chatbot" class="btn btn-success" style="flex: 1;">
+                                    <i class="fa-solid fa-comments"></i> Ask AI
+                                </a>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="empty-state">
+                            <i class="fa-solid fa-circle-question"></i>
+                            <h2>No Active Diagnosis</h2>
+                            <p>Enter or select patient symptoms on the left to invoke the diagnostic LLM model findings.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Quick Symptom adding JS script -->
+    <script>
+        function addSymptom(symptom) {
+            const textarea = document.getElementById('symptoms-input');
+            let currentVal = textarea.value.trim();
+            if (currentVal === "") {
+                textarea.value = symptom;
+            } else {
+                // If symptom is already there, don't append it
+                if (currentVal.toLowerCase().includes(symptom.toLowerCase())) {
+                    return;
+                }
+                // Check if last char is comma, if not append comma
+                if (currentVal.endsWith(',')) {
+                    textarea.value = currentVal + " " + symptom;
+                } else {
+                    textarea.value = currentVal + ", " + symptom;
+                }
+            }
+            textarea.focus();
+        }
+    </script>
+
+    <!-- State & Sidebar wiring -->
+    <script>
+        // Update PDF download link from localStorage
+        const pdfFile = localStorage.getItem('last_pdf_file');
+        const downloadPdfBtn = document.getElementById('sidebar-download-pdf');
+        if (pdfFile && pdfFile !== 'None' && pdfFile !== '') {
+            downloadPdfBtn.href = '/download/' + pdfFile;
+        } else {
+            downloadPdfBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('No active PDF report found. Please run an image diagnosis first.');
+            });
+        }
+
+        // Save recent prediction to localStorage
+        {% if prediction %}
+        const currentPrediction = {
+            type: 'symptom',
+            disease: '{{ prediction.disease }}',
+            confidence: '{{ prediction.confidence }}',
+            pdf: null,
+            date: new Date().toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            })
+        };
+        localStorage.setItem('recent_prediction', JSON.stringify(currentPrediction));
+        {% endif %}
+    </script>
+</body>
+</html>

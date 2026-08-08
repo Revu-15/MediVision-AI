@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediVision AI - Settings</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="dashboard-layout">
+        <!-- ================= SIDEBAR ================= -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-heart-pulse"></i>
+                <span>MediVision AI</span>
+            </div>
+
+            <!-- Profile Info -->
+            <div class="sidebar-profile">
+                <img src="{{ url_for('static', filename='images/user.png') }}" alt="User Profile">
+                <div class="profile-info">
+                    <span class="profile-name">Yash Profile</span>
+                    <span class="profile-role">Medical Staff</span>
+                </div>
+            </div>
+
+            <!-- Menu Links -->
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="/dashboard">
+                        <i class="fa-solid fa-house"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/upload">
+                        <i class="fa-solid fa-dharmachakra"></i>
+                        <span>Image Diagnosis</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/symptoms">
+                        <i class="fa-solid fa-stethoscope"></i>
+                        <span>Symptom Diagnosis</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/chatbot">
+                        <i class="fa-solid fa-comments"></i>
+                        <span>AI Chat</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/report">
+                        <i class="fa-solid fa-file-medical"></i>
+                        <span>Medical Report</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="sidebar-download-pdf">
+                        <i class="fa-solid fa-file-pdf"></i>
+                        <span>Download PDF</span>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="/settings">
+                        <i class="fa-solid fa-gear"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <p>v1.2.0 • Light Theme</p>
+            </div>
+        </aside>
+
+        <!-- ================= MAIN CANVAS ================= -->
+        <main class="main-canvas">
+            <!-- Top Header -->
+            <header class="topbar">
+                <div class="page-title">
+                    <h1>Application Settings</h1>
+                </div>
+                <div class="right-actions">
+                    <div class="notification-bell" title="System Notifications">
+                        <i class="fa-regular fa-bell"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Workspace Content -->
+            <div class="workspace" style="max-width: 800px;">
+                <div class="card">
+                    <h3 class="card-title">
+                        <i class="fa-solid fa-sliders"></i>
+                        <span>General Parameters</span>
+                    </h3>
+                    <div class="diagnosis-metrics">
+                        <div class="metric-row">
+                            <span class="metric-label">Active AI Reasoning Model</span>
+                            <span class="metric-value">Qwen-2.5-0.5B-Instruct</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Active Vision Transformer</span>
+                            <span class="metric-value">Florence-2 Captioning Model</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Default Confidence Threshold</span>
+                            <span class="metric-value">50% Minimum Filter</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title" style="color: var(--danger);">
+                        <i class="fa-solid fa-triangle-exclamation" style="color: var(--danger);"></i>
+                        <span>Reset Workspace</span>
+                    </h3>
+                    <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.6;">
+                        Clearing the workspace session deletes recent predictions cache, diagnostic history, and chatbot conversations stored in your browser storage.
+                    </p>
+                    <button class="btn btn-primary" style="background-color: var(--danger); box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2);" onclick="clearWorkspaceCache()">
+                        <i class="fa-solid fa-trash"></i> Clear Browser Diagnostics History
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Clear Cache JS function -->
+    <script>
+        function clearWorkspaceCache() {
+            if (confirm("Are you sure you want to clear diagnostics cache? This will reset your dashboard stats and chat history.")) {
+                localStorage.clear();
+                sessionStorage.clear();
+                alert("Diagnostic cache and history cleared successfully. Redirecting to home dashboard...");
+                window.location.href = '/dashboard';
+            }
+        }
+    </script>
+
+    <!-- State & Sidebar wiring -->
+    <script>
+        // Update PDF download link from localStorage
+        const pdfFile = localStorage.getItem('last_pdf_file');
+        const downloadPdfBtn = document.getElementById('sidebar-download-pdf');
+        if (pdfFile && pdfFile !== 'None' && pdfFile !== '') {
+            downloadPdfBtn.href = '/download/' + pdfFile;
+        } else {
+            downloadPdfBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('No active PDF report found. Please run an image diagnosis first.');
+            });
+        }
+    </script>
+</body>
+</html>
