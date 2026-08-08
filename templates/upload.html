@@ -114,6 +114,24 @@
                                 <i class="fa-solid fa-microchip"></i> Start AI Image Scan
                             </button>
                         </div>
+
+                        <!-- Sample Test Images Bar -->
+                        <div style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 16px;">
+                            <strong style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 10px;">
+                                <i class="fa-solid fa-vial"></i> Quick Test Sample Scans (Click to Download & Test):
+                            </strong>
+                            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                                <a href="{{ url_for('static', filename='samples/sample_brain_mri.png') }}" download="sample_brain_mri.png" class="btn btn-secondary" style="font-size: 12px; padding: 8px 14px; text-decoration: none;">
+                                    🧠 Download Sample Brain MRI
+                                </a>
+                                <a href="{{ url_for('static', filename='samples/sample_chest_xray.png') }}" download="sample_chest_xray.png" class="btn btn-secondary" style="font-size: 12px; padding: 8px 14px; text-decoration: none;">
+                                    🫁 Download Sample Chest X-ray
+                                </a>
+                                <a href="{{ url_for('static', filename='samples/sample_eye_fundus.png') }}" download="sample_eye_fundus.png" class="btn btn-secondary" style="font-size: 12px; padding: 8px 14px; text-decoration: none;">
+                                    👁 Download Sample Eye Fundus
+                                </a>
+                            </div>
+                        </div>
                     </form>
                 </div>
 
