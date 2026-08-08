@@ -135,9 +135,20 @@ class PDFGenerator:
         story.append(Spacer(1, 15))
 
         # Display Image (scaled)
+        temp_img_path = None
         if image_path and os.path.exists(image_path):
             try:
-                img = Image(image_path)
+                from PIL import Image as PILImage
+                import tempfile
+                
+                with PILImage.open(image_path) as pil_img:
+                    pil_img = pil_img.convert("RGB")
+                    temp_file = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
+                    temp_img_path = temp_file.name
+                    temp_file.close()
+                    pil_img.save(temp_img_path, format="JPEG")
+
+                img = Image(temp_img_path)
                 img.drawWidth = 200
                 img.drawHeight = 200
                 story.append(img)
@@ -221,3 +232,9 @@ class PDFGenerator:
             )
 
         doc.build(story)
+
+        if temp_img_path and os.path.exists(temp_img_path):
+            try:
+                os.remove(temp_img_path)
+            except Exception:
+                pass
