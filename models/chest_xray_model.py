@@ -29,7 +29,7 @@ class ChestXRayModel:
         if os.path.exists(CHEXFICIENT_PATH) and os.path.exists(os.path.join(CHEXFICIENT_PATH, "config.json")):
             self.repo_id = CHEXFICIENT_PATH
         else:
-            print("⏬ Local CheXficient files not found. Using Hugging Face 'StanfordAIMI/CheXficient'...")
+            print("[INFO] Local CheXficient files not found. Using Hugging Face 'StanfordAIMI/CheXficient'...")
             self.repo_id = "StanfordAIMI/CheXficient"
 
         self.model = AutoModel.from_pretrained(
@@ -37,25 +37,25 @@ class ChestXRayModel:
             trust_remote_code=True
         ).to(self.device)
 
-        print("✅ Model Loaded Successfully")
+        print("[OK] Model Loaded Successfully")
 
         self.tokenizer = AutoTokenizer.from_pretrained(
             self.repo_id,
             trust_remote_code=True
         )
 
-        print("✅ Tokenizer Loaded Successfully")
+        print("[OK] Tokenizer Loaded Successfully")
 
         self.image_processor = AutoImageProcessor.from_pretrained(
             self.repo_id,
             trust_remote_code=True
         )
 
-        print("✅ Image Processor Loaded Successfully")
+        print("[OK] Image Processor Loaded Successfully")
 
         self.model.eval()
 
-        print("✅ Chest X-ray Model Ready")
+        print("[OK] Chest X-ray Model Ready")
 
 
     def predict(self, image_path):

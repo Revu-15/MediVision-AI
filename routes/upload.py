@@ -104,7 +104,7 @@ def upload():
             return render_template("upload.html", error=error_msg)
 
         except Exception as e:
-            print(f"Upload error: {e}")
+            print(f"Upload error: {repr(e)}")
             return render_template("upload.html", error=f"⚠️ An error occurred: {str(e)}")
 
     return render_template("upload.html")

@@ -1,6 +1,13 @@
+import sys
+import os
+
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
+if hasattr(sys.stderr, 'reconfigure'):
+    sys.stderr.reconfigure(encoding='utf-8')
+
 from flask import Flask, render_template, session, send_from_directory
 from routes.upload import upload_bp
-import os
 from dotenv import load_dotenv
 from routes.download import download_bp
 from routes.symptoms import symptom_bp

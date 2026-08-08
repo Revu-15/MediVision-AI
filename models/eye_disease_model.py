@@ -115,7 +115,7 @@ class EyeDiseaseModel:
         # -------------------------------
         model_path = os.path.join("EyeDisease", "pytorch_model.bin")
         if not os.path.exists(model_path):
-            print("⏬ Eye Disease model weights not found locally. Downloading from Hugging Face...")
+            print("[INFO] Eye Disease model weights not found locally. Downloading from Hugging Face...")
             from huggingface_hub import hf_hub_download
             os.makedirs("EyeDisease", exist_ok=True)
             hf_hub_download(
@@ -123,7 +123,7 @@ class EyeDiseaseModel:
                 filename="pytorch_model.bin",
                 local_dir="EyeDisease"
             )
-            print("✅ Eye Disease model weights downloaded successfully!")
+            print("[OK] Eye Disease model weights downloaded successfully!")
 
         checkpoint = torch.load(
             model_path,
@@ -135,7 +135,7 @@ class EyeDiseaseModel:
         self.model.to(self.device)
         self.model.eval()
 
-        print("✅ Eye Disease Model Loaded Successfully")
+        print("[OK] Eye Disease Model Loaded Successfully")
 
     # -----------------------------------------
     # Prediction
