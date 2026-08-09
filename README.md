@@ -9,8 +9,9 @@
 ![PyTorch](https://img.shields.io/badge/PyTorch-2.6.0-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)
 ![HuggingFace](https://img.shields.io/badge/Transformers-Florence--2%20%7C%20Qwen2.5-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-Click_Here_to_Launch-0066FF?style=for-the-badge&logo=google-chrome&logoColor=white)](https://devoutly-walnut-cartridge.ngrok-free.dev/)
 
-> 🌐 **Live Application Demo:** [https://devoutly-walnut-cartridge.ngrok-free.dev/](https://devoutly-walnut-cartridge.ngrok-free.dev/)
+👉 **[🚀 Launch MediVision AI Live Web App](https://devoutly-walnut-cartridge.ngrok-free.dev/)**
 
 ---
 
