@@ -10,7 +10,7 @@ echo [1/2] Starting Flask Backend Server (Port 5000)...
 start /min "MediVision Flask" cmd /c ".\venv\Scripts\python app.py"
 
 echo [2/2] Connecting ngrok Public Live Tunnel...
-start /min "MediVision ngrok" cmd /c ".\venv\Scripts\ngrok.exe http 5000"
+start /min "MediVision ngrok" cmd /c ".\venv\Scripts\ngrok.exe http 127.0.0.1:5000"
 
 echo.
 echo ========================================================
