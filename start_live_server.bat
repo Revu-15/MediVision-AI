@@ -1,5 +1,7 @@
 @echo off
 title MediVision AI - Live Server Launcher
+cd /d "C:\Users\polam\Desktop\MediVision-AI"
+
 echo ========================================================
 echo        🏥 MediVision AI - Live Server Launcher
 echo ========================================================
