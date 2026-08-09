@@ -1,5 +1,6 @@
 import sys
 import os
+import json
 
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
@@ -36,7 +37,17 @@ def dashboard():
 
 @app.route("/report")
 def report_page():
-    report = session.get("medical_report")
+    report = None
+    # Load report from JSON file (avoids 4KB session cookie limit)
+    report_file = session.get("medical_report_file")
+    if report_file:
+        report_path = os.path.join("reports", report_file)
+        try:
+            with open(report_path, "r", encoding="utf-8") as f:
+                report = json.load(f)
+        except Exception as e:
+            print(f"Error reading report file: {e}")
+            report = None
     return render_template("report.html", report=report)
 
 @app.route("/settings")
@@ -51,4 +62,4 @@ def uploaded_file(filename):
     )
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=False)

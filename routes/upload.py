@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request
 from PIL import Image
 import os
 import time
+import json
 from flask import session
 
 from models.shared_models import (
@@ -64,8 +65,21 @@ def upload():
             print("=" * 70)
             print(report)
 
+            # Save report to JSON file (session cookies are limited to ~4KB)
+            timestamp = int(time.time())
+            report_json_filename = f"report_{timestamp}.json"
+            report_json_path = os.path.join("reports", report_json_filename)
+            try:
+                with open(report_json_path, "w", encoding="utf-8") as f:
+                    json.dump(report, f, ensure_ascii=False, indent=2)
+                session["medical_report_file"] = report_json_filename
+                print(f"Report JSON saved: {report_json_path}")
+            except Exception as e:
+                print(f"Error saving report JSON: {e}")
+                session["medical_report_file"] = None
+
             # Generate PDF report
-            pdf_filename = f"report_{int(time.time())}.pdf"
+            pdf_filename = f"report_{timestamp}.pdf"
             pdf_path = os.path.join("reports", pdf_filename)
             try:
                 pdf_generator.generate(
@@ -80,8 +94,6 @@ def upload():
             except Exception as e:
                 print(f"Error generating PDF report: {e}")
                 pdf_filename = None
-
-            session["medical_report"] = report
 
             return render_template(
                 "upload.html",
