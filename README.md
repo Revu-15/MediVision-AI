@@ -13,6 +13,10 @@
 
 👉 **[🚀 Launch MediVision AI Live Web App](https://devoutly-walnut-cartridge.ngrok-free.dev/)**
 
+> ⚠️ **Important Host System Notice:**  
+> The live tunnel URL (`https://devoutly-walnut-cartridge.ngrok-free.dev/`) routes traffic directly to the Host/Admin PC. **The Host PC must be powered ON and connected to the internet** for the live link to work. If the Host PC is powered off or disconnected from the network, the live link will show `ERR_NGROK_3200 (Offline)`.  
+> *For 24/7 cloud availability when the Host PC is turned off, deploy using the included [Google Colab Notebook](MediVision_Colab_Deploy.ipynb) or Railway cloud options below.*
+
 ---
 
 ## 📖 Overview
