@@ -10,6 +10,8 @@
 ![HuggingFace](https://img.shields.io/badge/Transformers-Florence--2%20%7C%20Qwen2.5-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
+> 🌐 **Live Application Demo:** [https://devoutly-walnut-cartridge.ngrok-free.dev/](https://devoutly-walnut-cartridge.ngrok-free.dev/)
+
 ---
 
 ## 📖 Overview
