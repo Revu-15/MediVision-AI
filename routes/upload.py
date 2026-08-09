@@ -35,38 +35,46 @@ def upload():
         save_path = os.path.join(UPLOAD_DIR, file.filename)
 
         try:
+            t_start = time.time()
             file.save(save_path)
 
             image = Image.open(save_path).convert("RGB")
 
             # Florence Caption
+            t0 = time.time()
             caption = florence.generate_caption(image)
             caption = caption["<CAPTION>"]
+            t_caption = time.time() - t0
 
             print("=" * 70)
-            print("Caption :", caption)
+            print(f"⏱️ Florence-2 Caption ({t_caption:.2f}s): {caption}")
 
             # Detect Image Type
             image_type = router.detect_image_type(caption)
 
-            print("Image Type :", image_type)
+            print(f"📷 Detected Image Type: {image_type}")
 
             # Disease Prediction
+            t1 = time.time()
             prediction = dispatcher.predict(
                 image_type=image_type,
                 image_path=save_path,
                 caption=caption
             )
-
-            print("=" * 70)
-            print("Prediction :", prediction)
+            t_predict = time.time() - t1
+            print(f"⏱️ Disease Classifier ({t_predict:.2f}s): {prediction}")
 
             # Medical LLM Report
+            t2 = time.time()
             result = report_engine.generate(prediction)
             report = result["report"]
+            t_report = time.time() - t2
 
+            t_total = time.time() - t_start
             print("=" * 70)
-            print(report)
+            print(f"⚡ TOTAL SCAN PROCESSING TIME: {t_total:.2f} seconds")
+            print(f"   └─ Caption: {t_caption:.2f}s | Classifier: {t_predict:.2f}s | LLM Report: {t_report:.2f}s")
+            print("=" * 70)
 
             # Save report to JSON file (session cookies are limited to ~4KB)
             # Also include image and prediction metadata so the report page can display them
