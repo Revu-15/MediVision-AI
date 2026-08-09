@@ -39,6 +39,7 @@ def upload():
             file.save(save_path)
 
             image = Image.open(save_path).convert("RGB")
+            image.thumbnail((512, 512))
 
             # Florence Caption
             t0 = time.time()
