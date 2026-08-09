@@ -19,7 +19,10 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "medivision_ai_secret_key_2026")
 
-app.config["UPLOAD_FOLDER"] = "uploads"
+# Use absolute path so images are always found regardless of working directory
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+app.config["UPLOAD_FOLDER"] = os.path.join(BASE_DIR, "uploads")
+os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
 # Register Routes
 app.register_blueprint(chatbot_bp)
@@ -41,7 +44,7 @@ def report_page():
     # Load report from JSON file (avoids 4KB session cookie limit)
     report_file = session.get("medical_report_file")
     if report_file:
-        report_path = os.path.join("reports", report_file)
+        report_path = os.path.join(BASE_DIR, "reports", report_file)
         try:
             with open(report_path, "r", encoding="utf-8") as f:
                 report = json.load(f)

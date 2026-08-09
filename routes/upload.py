@@ -14,9 +14,12 @@ from models.shared_models import (
 )
 upload_bp = Blueprint("upload", __name__)
 
-# Ensure required directories exist
-os.makedirs("uploads", exist_ok=True)
-os.makedirs("reports", exist_ok=True)
+# Use absolute paths so files are always found
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
+REPORTS_DIR = os.path.join(BASE_DIR, "reports")
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+os.makedirs(REPORTS_DIR, exist_ok=True)
 
 
 @upload_bp.route("/upload", methods=["GET", "POST"])
@@ -29,7 +32,7 @@ def upload():
         if not file or file.filename == "":
             return render_template("upload.html", error="No file selected. Please upload a medical image.")
 
-        save_path = os.path.join("uploads", file.filename)
+        save_path = os.path.join(UPLOAD_DIR, file.filename)
 
         try:
             file.save(save_path)
@@ -69,7 +72,7 @@ def upload():
             # Also include image and prediction metadata so the report page can display them
             timestamp = int(time.time())
             report_json_filename = f"report_{timestamp}.json"
-            report_json_path = os.path.join("reports", report_json_filename)
+            report_json_path = os.path.join(REPORTS_DIR, report_json_filename)
             try:
                 report_data = dict(report)
                 report_data["_image_filename"] = file.filename
@@ -88,7 +91,7 @@ def upload():
 
             # Generate PDF report
             pdf_filename = f"report_{timestamp}.pdf"
-            pdf_path = os.path.join("reports", pdf_filename)
+            pdf_path = os.path.join(REPORTS_DIR, pdf_filename)
             try:
                 pdf_generator.generate(
                     output_path=pdf_path,
