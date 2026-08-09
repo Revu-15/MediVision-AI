@@ -27,11 +27,15 @@ class FlorenceModel:
 
     def generate_caption(self, image: Image.Image):
 
+        # Fast resize for high-speed CPU inference
+        small_image = image.copy()
+        small_image.thumbnail((512, 512))
+
         prompt = "<CAPTION>"
 
         inputs = self.processor(
             text=prompt,
-            images=image,
+            images=small_image,
             return_tensors="pt"
         )
 
@@ -40,7 +44,8 @@ class FlorenceModel:
             generated_ids = self.model.generate(
                 input_ids=inputs["input_ids"],
                 pixel_values=inputs["pixel_values"],
-                max_new_tokens=128
+                max_new_tokens=40,
+                do_sample=False
             )
 
         generated_text = self.processor.batch_decode(

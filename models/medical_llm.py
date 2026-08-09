@@ -85,11 +85,8 @@ Now generate the real JSON report for: {disease}
 
             outputs = self.model.generate(
                 **inputs,
-                max_new_tokens=1500,
-                do_sample=True,
-                temperature=0.3,
-                top_p=0.85,
-                repetition_penalty=1.15,
+                max_new_tokens=220,
+                do_sample=False,
                 pad_token_id=self.tokenizer.eos_token_id
             )
 
