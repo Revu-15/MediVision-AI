@@ -1,0 +1,17 @@
+{
+    "python.languageServer": "Pylance",
+    "python.analysis.diagnosticMode": "openFilesOnly",
+    "python.analysis.typeCheckingMode": "off",
+    "python.linting.enabled": false,
+    "python.analysis.ignore": [
+        "c:\\__pyrefly_virtual__\\**",
+        "__pyrefly_virtual__/**",
+        "**/inmemory/**"
+    ],
+    "python.analysis.exclude": [
+        "c:\\__pyrefly_virtual__\\**",
+        "__pyrefly_virtual__/**",
+        "**/inmemory/**"
+    ],
+    "python.defaultInterpreterPath": "${workspaceFolder}\\venv\\Scripts\\python.exe"
+}
