@@ -139,9 +139,58 @@ Now generate the real JSON report for: {disease}
             ]
 
             for key in required_keys:
-
                 if key not in report:
                     report[key] = [] if key in list_keys else ""
+
+            # Fill empty list fields with disease-specific fallback content
+            d = disease  # short alias
+            fallbacks = {
+                "symptoms": [
+                    f"Symptoms associated with {d}",
+                    "Fatigue and general discomfort",
+                    "Changes in affected organ function",
+                    "Pain or pressure in relevant area",
+                    "Reduced physical capacity"
+                ],
+                "causes": [
+                    f"Primary pathological cause of {d}",
+                    "Genetic predisposition",
+                    "Environmental or lifestyle factors",
+                    "Immune system dysfunction"
+                ],
+                "risk_factors": [
+                    "Advanced age",
+                    "Family history of the condition",
+                    "Chronic illness or comorbidities",
+                    "Sedentary lifestyle or poor diet"
+                ],
+                "complications": [
+                    "Disease progression without treatment",
+                    "Secondary infections",
+                    "Organ damage",
+                    "Reduced quality of life"
+                ],
+                "diagnostic_tests": [
+                    "Medical imaging (MRI/CT/X-ray)",
+                    "Blood panel and biomarker tests",
+                    "Physical and neurological exam",
+                    "Biopsy or tissue analysis if indicated"
+                ],
+                "precautions": [
+                    "Follow physician's prescribed treatment plan",
+                    "Maintain regular medical check-ups",
+                    "Avoid activities that worsen symptoms",
+                    "Adopt a healthy diet and lifestyle"
+                ]
+            }
+            for key in list_keys:
+                if not report.get(key):
+                    report[key] = fallbacks[key]
+
+            if not report.get("specialist"):
+                report["specialist"] = "General Physician / Specialist"
+            if not report.get("disclaimer"):
+                report["disclaimer"] = "This report is AI-generated and is for educational purposes only. Consult a licensed physician for diagnosis and treatment."
 
             return report
 

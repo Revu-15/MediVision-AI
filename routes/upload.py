@@ -66,13 +66,21 @@ def upload():
             print(report)
 
             # Save report to JSON file (session cookies are limited to ~4KB)
+            # Also include image and prediction metadata so the report page can display them
             timestamp = int(time.time())
             report_json_filename = f"report_{timestamp}.json"
             report_json_path = os.path.join("reports", report_json_filename)
             try:
+                report_data = dict(report)
+                report_data["_image_filename"] = file.filename
+                report_data["_image_type"] = image_type
+                report_data["_caption"] = caption
+                report_data["_prediction"] = prediction.get("prediction", "")
+                report_data["_confidence"] = prediction.get("confidence", 0)
                 with open(report_json_path, "w", encoding="utf-8") as f:
-                    json.dump(report, f, ensure_ascii=False, indent=2)
+                    json.dump(report_data, f, ensure_ascii=False, indent=2)
                 session["medical_report_file"] = report_json_filename
+                session["last_pdf_file"] = f"report_{timestamp}.pdf"
                 print(f"Report JSON saved: {report_json_path}")
             except Exception as e:
                 print(f"Error saving report JSON: {e}")

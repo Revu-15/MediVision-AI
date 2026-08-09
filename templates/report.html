@@ -112,6 +112,30 @@
                     </div>
                     {% endif %}
 
+                    <!-- Scan Summary Banner -->
+                    {% if report._image_filename %}
+                    <div class="report-card report-grid-full" style="flex-direction: row; align-items: center; gap: 20px; padding: 18px 24px;">
+                        <img src="/uploads/{{ report._image_filename }}" alt="Scanned Image"
+                             style="width: 110px; height: 110px; object-fit: cover; border-radius: 12px; border: 2px solid var(--border-color); flex-shrink: 0;">
+                        <div style="flex: 1;">
+                            <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px;">
+                                <i class="fa-solid fa-brain" style="margin-right: 5px;"></i>
+                                {{ report._image_type | title }} Scan Analysis
+                            </div>
+                            <div style="font-size: 22px; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">
+                                {{ report._prediction }}
+                            </div>
+                            <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px;">
+                                {{ report._caption }}
+                            </div>
+                            <div style="display: inline-flex; align-items: center; gap: 8px; background: var(--primary-light); color: var(--primary); padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;">
+                                <i class="fa-solid fa-chart-simple"></i>
+                                AI Confidence: {{ "%.1f"|format(report._confidence) }}%
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
                     <!-- Report Grid of Cards -->
                     <div class="report-grid">
                         
